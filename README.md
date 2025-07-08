@@ -39,7 +39,7 @@ proyecto_etl/
 Automatizar el proceso de integración entre dos fuentes de datos:
 
 * Una **tabla SQL existente** (`db_operaciones.operaciones`).
-* Un **archivo Excel** (`datos_extras.xlsx`) que debes cargar primero a SQL.
+* Un **archivo Excel** (`subir_preve_excel.csv`) que debes cargar primero a SQL.
 
 El candidato debe ejecutar una consulta SQL con un **LEFT JOIN por la columna `cedula`**, filtrar por rango de fechas (`fecha_operacion`) y exportar el resultado como un archivo Excel.
 

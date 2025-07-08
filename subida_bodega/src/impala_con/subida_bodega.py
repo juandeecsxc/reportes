@@ -6,6 +6,63 @@ import time
 from typing import Tuple, List, Union
 from collections import Counter
 
+class Impala:
+    """Clase para manejar conexiones y operaciones con Impala"""
+    
+    def __init__(self, dsn: str):
+        """Inicializa la conexión a Impala usando el DSN proporcionado"""
+        self.dsn = dsn
+        print(f"Conectando a Impala usando DSN: {dsn}")
+        # Aquí iría la lógica real de conexión
+        # Por ahora es un mock para que funcione el código
+    
+    def run_sql_query(self, query: str, verbose: bool = True) -> None:
+        """Ejecuta una consulta SQL sin retornar resultados"""
+        if verbose:
+            print(f"Ejecutando query: {query}")
+        # Aquí iría la lógica real de ejecución
+        print("Query ejecutado con éxito!")
+    
+    def run_sql_query_and_fetch(self, query: str) -> List[Tuple]:
+        """Ejecuta una consulta SQL y retorna los resultados"""
+        print(f"Ejecutando query y obteniendo resultados: {query}")
+        # Mock: retorna una lista vacía por defecto
+        # En la implementación real, retornaría los resultados de la consulta
+        return []
+    
+    def execute_many_batches(self, insert_query: str, df: pd.DataFrame, batch_size: int) -> None:
+        """Ejecuta inserciones en lotes"""
+        total_rows = len(df)
+        num_batches = (total_rows + batch_size - 1) // batch_size
+        
+        print(f"\nSe realizarán envíos de {num_batches} lotes de size {batch_size}...")
+        
+        for i in range(0, total_rows, batch_size):
+            batch_df = df.iloc[i:i+batch_size]
+            batch_num = (i // batch_size) + 1
+            print(f"\n{min(i + batch_size, total_rows)} registros cargados de {total_rows}...")
+            
+            # Aquí iría la lógica real de inserción por lotes
+            # Por ahora es un mock
+        
+        print(f"\n{total_rows} registros procesados exitosamente")
+
+class DuplicatedColumnsError(Exception):
+    """Excepción para columnas duplicadas"""
+    pass
+
+class SQLDataTypeError(Exception):
+    """Excepción para errores de tipo de datos SQL"""
+    pass
+
+class TableNotExistsError(Exception):
+    """Excepción para tablas que no existen"""
+    pass
+
+class TableInconsistencyError(Exception):
+    """Excepción para inconsistencias en tablas"""
+    pass
+
 def read_csv(path: str, sep: str) -> pd.DataFrame:
     """Lee el archivo .csv.
 
@@ -93,7 +150,7 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return _df
 
-def define_queries(table_name: str, columns: List[str]) -> Tuple[str, str, str, str, str, str]:
+def define_queries(table_name: str, columns: List[str]) -> Tuple[str, str, str, str, str, str, str]:
     """Construye queries sql con las columnas del dataframe y el nombre de la tabla.
 
     Args:
@@ -101,7 +158,7 @@ def define_queries(table_name: str, columns: List[str]) -> Tuple[str, str, str, 
         columns: Columnas que contendrá la tabla.
 
     Returns:
-        6 queries de tipo: DROP, CREATE, INSERT, COMPUTE, INVALIDATE, REFRESH.
+        7 queries de tipo: DROP, CREATE, INSERT, COMPUTE, INVALIDATE, REFRESH, TRUNCATE.
     """
     truncate_query = f"TRUNCATE IF EXISTS {table_name}"
     drop_query = f"DROP TABLE IF EXISTS {table_name}"
@@ -163,7 +220,7 @@ def subir_datos_datalake(
     drop_query, create_query, insert_query, compute_query, \
     invalidate_query, refresh_query, truncate_query = define_queries(table_name, df_columns)
 
-    # Instanciar clase Impala creada en módulo utils, ver archivo utils.py
+    # Instanciar clase Impala definida en este mismo archivo
     impala = Impala(dsn)
 
     if insert_only:

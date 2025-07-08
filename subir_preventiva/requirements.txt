@@ -1,0 +1,3 @@
+pandas
+impyla
+python-dotenv 
